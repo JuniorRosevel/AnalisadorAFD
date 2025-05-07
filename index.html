@@ -42,6 +42,7 @@
 
       let erros = [];
       let nsrAnterior = -1;
+      let eventos = { 1: 0, 2: 0, 4: 0, 5: 0, 6: 0 };
 
       for (let i = 0; i < linhas.length; i++) {
         const linha = linhas[i];
@@ -58,17 +59,31 @@
           nsrAnterior = nsr;
         }
 
-        // Validação de comprimento da linha (mínimo esperado: 30, pode ser ajustado)
+        // Verifica tipo de evento (posição 10)
+        const tipoEvento = parseInt(linha.charAt(9));
+        if ([1, 2, 4, 5, 6].includes(tipoEvento)) {
+          eventos[tipoEvento]++;
+        }
+
+        // Validação de comprimento da linha
         if (linha.length < 30) {
           erros.push(`Linha ${linhaNum}: comprimento inválido (${linha.length} caracteres)`);
         }
       }
 
-      if (erros.length === 0) {
-        resultado.innerHTML = "<p style='color:green;'>Arquivo AFD válido. Nenhum erro encontrado.</p>";
-      } else {
-        resultado.innerHTML = "<h4>Erros encontrados:</h4>" + erros.map(e => `<div class='error'>${e}</div>`).join("");
+      let html = "<h4>Resumo de eventos:</h4><ul>";
+      for (const tipo in eventos) {
+        html += `<li>Tipo ${tipo}: ${eventos[tipo]} ocorrência(s)</li>`;
       }
+      html += "</ul>";
+
+      if (erros.length === 0) {
+        html += "<p style='color:green;'>Arquivo AFD válido. Nenhum erro encontrado.</p>";
+      } else {
+        html += "<h4>Erros encontrados:</h4>" + erros.map(e => `<div class='error'>${e}</div>`).join("");
+      }
+
+      resultado.innerHTML = html;
     }
   </script>
 </body>
